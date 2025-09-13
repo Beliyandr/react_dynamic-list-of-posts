@@ -37,4 +37,4 @@ Install Prettier Extention and use this [VSCode settings](https://mate-academy.g
 1. (*) Handle `Add` and `Delete` errors so the user can retry
 
 
-- Replace `<your_account>` with your Github username in the [DEMO LINK](https://beliyandr.github.io/react_dynamic-list-of-posts/) and add it to the PR description.
+- Replace `<your_account>`  with your Github username in the [DEMO LINK](https://beliyandr.github.io/react_dynamic-list-of-posts/) and add it to the PR description.
