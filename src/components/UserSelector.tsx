@@ -1,31 +1,33 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { User } from '../types/User';
 import classNames from 'classnames';
+import { Post } from '../types/Post';
 
 type Props = {
   users: User[];
-  setActiveUser: (user: User) => void;
   activeUser: User | null;
+  setActiveUser: (user: User) => void;
+  getPosts: (userId: number) => void;
 };
 
 export const UserSelector: FC<Props> = ({
   users,
-  setActiveUser,
   activeUser,
+  setActiveUser = () => {},
 }) => {
-  const [isDropdownActive, setIsDropdownActive] = useState(false);
+  const [openDrodown, setOpenDrodown] = useState(false);
 
   // const [selectedValue, setSelectedValue] = useState('Choose a user');
 
   const handleActiveUser = (user: User) => {
     setActiveUser(user);
-    setIsDropdownActive(!isDropdownActive);
+    setOpenDrodown(false);
   };
 
   return (
     <div
       data-cy="UserSelector"
-      className={classNames('dropdown', { 'is-active': isDropdownActive })}
+      className={classNames('dropdown', { 'is-active': openDrodown })}
     >
       <div className="dropdown-trigger">
         <button
@@ -33,7 +35,9 @@ export const UserSelector: FC<Props> = ({
           className="button"
           aria-haspopup="true"
           aria-controls="dropdown-menu"
-          onClick={() => setIsDropdownActive(!isDropdownActive)}
+          onClick={() => {
+            setOpenDrodown(true);
+          }}
         >
           <span>{activeUser?.name ?? 'Choose a user'}</span>
 
@@ -47,6 +51,7 @@ export const UserSelector: FC<Props> = ({
         <div className="dropdown-content">
           {users.map(user => {
             const { id, name } = user;
+
             return (
               <a
                 key={id}

@@ -5,22 +5,23 @@ import '@fortawesome/fontawesome-free/css/all.css';
 import './App.scss';
 
 import { PostsList } from './components/PostsList';
-import { PostDetails } from './components/PostDetails';
 import { UserSelector } from './components/UserSelector';
 import { Loader } from './components/Loader';
 import { useEffect, useState } from 'react';
 import { User } from './types/User';
 import { Post } from './types/Post';
 import { getUsers } from './components/services/users';
+import { getUserPosts } from './components/services/posts';
+import { PostDetails } from './components/PostDetails';
 
 export const App = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [posts, setPosts] = useState<Post[]>([]);
 
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
   const [hasPosts, setHasPosts] = useState(false);
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [activeUser, setActiveUser] = useState<User | null>(null);
 
@@ -33,6 +34,35 @@ export const App = () => {
       .finally(() => {});
   }, []);
 
+  useEffect(() => {
+    if (activeUser) {
+      getActiveUserPost();
+    }
+  }, [activeUser]);
+
+  const getActiveUserPost = async () => {
+    if (!activeUser) {
+      return;
+    }
+    setLoading(true);
+
+    try {
+      const posts = await getUserPosts(activeUser.id);
+
+      setPosts(posts);
+      if (posts.length) {
+        setHasPosts(true);
+      } else {
+        setHasPosts(false);
+      }
+    } catch (error) {
+      setHasPosts(false);
+      setErrorMessage('Something went wrong!');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <main className="section">
       <div className="container">
@@ -44,6 +74,7 @@ export const App = () => {
                   users={users}
                   activeUser={activeUser}
                   setActiveUser={setActiveUser}
+                  getPosts={getActiveUserPost}
                 />
               </div>
 
@@ -51,21 +82,26 @@ export const App = () => {
                 {!activeUser && (
                   <p data-cy="NoSelectedUser">No user selected</p>
                 )}
+                {loading && <Loader />}
 
-                <Loader />
+                {errorMessage && (
+                  <div
+                    className="notification is-danger"
+                    data-cy="PostsLoadingError"
+                  >
+                    Something went wrong!
+                  </div>
+                )}
 
-                <div
-                  className="notification is-danger"
-                  data-cy="PostsLoadingError"
-                >
-                  Something went wrong!
-                </div>
+                {hasPosts && activeUser && !loading && (
+                  <PostsList posts={posts} />
+                )}
 
-                <div className="notification is-warning" data-cy="NoPostsYet">
-                  No posts yet
-                </div>
-
-                <PostsList />
+                {!hasPosts && activeUser && !loading && (
+                  <div className="notification is-warning" data-cy="NoPostsYet">
+                    No posts yet
+                  </div>
+                )}
               </div>
             </div>
           </div>
