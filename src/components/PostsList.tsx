@@ -14,8 +14,12 @@ export const PostsList: FC<Props> = ({ posts }) => {
       if (!prev || prev.id !== post.id) {
         return post;
       }
+<<<<<<< HEAD
 
       return prev;
+=======
+      return null;
+>>>>>>> ba96b7d0a7f4a25c9045d035b95aef4f0dd94b9a
     });
   };
 
@@ -36,6 +40,7 @@ export const PostsList: FC<Props> = ({ posts }) => {
         <tbody>
           {posts.map(post => {
             const { id, title } = post;
+            const active = activePost?.id !== id;
 
             return (
               <tr data-cy="Post" key={id}>
@@ -48,10 +53,13 @@ export const PostsList: FC<Props> = ({ posts }) => {
                     type="button"
                     data-cy="PostButton"
                     className={classNames('button is-link', {
-                      'is-light': true,
+                      'is-light': active && true,
                     })}
+                    onClick={() => {
+                      handleOpenPost(post);
+                    }}
                   >
-                    Open
+                    {active ? 'Open' : 'Close'}
                   </button>
                 </td>
               </tr>
