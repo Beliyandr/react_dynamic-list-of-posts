@@ -1,26 +1,27 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Post } from '../types/Post';
 import classNames from 'classnames';
+import { Comment } from '../types/Comment';
 
 type Props = {
   posts: Post[];
+  activePost: Post | null;
+  getActivePost: (post: Post | null) => void;
 };
 
-export const PostsList: FC<Props> = ({ posts }) => {
-  const [activePost, setActivePost] = useState<Post | null>(null);
+export const PostsList: FC<Props> = ({
+  posts,
+  activePost,
+  getActivePost = () => {},
+}) => {
+  // const [activePost, setActivePost] = useState<Post | null>(null);
 
   const handleOpenPost = (post: Post) => {
-    setActivePost(prev => {
-      if (!prev || prev.id !== post.id) {
-        return post;
-      }
-<<<<<<< HEAD
-
-      return prev;
-=======
-      return null;
->>>>>>> ba96b7d0a7f4a25c9045d035b95aef4f0dd94b9a
-    });
+    if (activePost?.id !== post.id) {
+      getActivePost(post);
+    } else {
+      getActivePost(null);
+    }
   };
 
   return (
@@ -53,7 +54,7 @@ export const PostsList: FC<Props> = ({ posts }) => {
                     type="button"
                     data-cy="PostButton"
                     className={classNames('button is-link', {
-                      'is-light': active && true,
+                      'is-light': active,
                     })}
                     onClick={() => {
                       handleOpenPost(post);

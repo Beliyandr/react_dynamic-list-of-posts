@@ -7,7 +7,6 @@ type Props = {
   users: User[];
   activeUser: User | null;
   setActiveUser: (user: User) => void;
-  getPosts: (userId: number) => void;
 };
 
 export const UserSelector: FC<Props> = ({

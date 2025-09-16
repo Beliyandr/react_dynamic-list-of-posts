@@ -13,12 +13,18 @@ import { Post } from './types/Post';
 import { getUsers } from './components/services/users';
 import { getUserPosts } from './components/services/posts';
 import { PostDetails } from './components/PostDetails';
+import { getPostComments } from './components/services/comments';
+import { Comment } from './types/Comment';
 
 export const App = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [posts, setPosts] = useState<Post[]>([]);
+  const [comments, setComments] = useState<Comment[]>([]);
+
+  const [activePost, setActivePost] = useState<Post | null>(null);
 
   const [errorMessage, setErrorMessage] = useState('');
+
   const [hasPosts, setHasPosts] = useState(false);
 
   const [loading, setLoading] = useState(false);
@@ -40,8 +46,32 @@ export const App = () => {
     }
   }, [activeUser]);
 
-  const getPostComments = async() => {
+  useEffect(() => {
+    if (activePost) {
+      getComments();
+    }
+  }, [activePost]);
 
+  const getComments = async () => {
+    if (!activePost) {
+      return;
+    }
+    setLoading(true);
+    try {
+      const gotComments = await getPostComments(activePost.id);
+
+      setComments(gotComments);
+
+      // if (comments.length) {
+      //   setHasComments(true);
+      // } else {
+      //   setHasComments(false);
+      // }
+    } catch (error) {
+      setErrorMessage('Something went wrong!');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const getActiveUserPost = async () => {
@@ -68,8 +98,6 @@ export const App = () => {
     }
   };
 
-  useEffect(() => {}, []);
-
   return (
     <main className="section">
       <div className="container">
@@ -81,7 +109,6 @@ export const App = () => {
                   users={users}
                   activeUser={activeUser}
                   setActiveUser={setActiveUser}
-                  getPosts={getActiveUserPost}
                 />
               </div>
 
@@ -101,7 +128,11 @@ export const App = () => {
                 )}
 
                 {hasPosts && activeUser && !loading && (
-                  <PostsList posts={posts} />
+                  <PostsList
+                    posts={posts}
+                    getActivePost={setActivePost}
+                    activePost={activePost}
+                  />
                 )}
 
                 {!hasPosts && activeUser && !loading && (
@@ -113,7 +144,7 @@ export const App = () => {
             </div>
           </div>
 
-          {hasPosts && activeUser && !loading && false && (
+          {activePost && !loading && (
             <div
               data-cy="Sidebar"
               className={classNames(
