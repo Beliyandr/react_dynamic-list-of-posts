@@ -44,6 +44,7 @@ export const App = () => {
     if (!activeUser) {
       return;
     }
+
     setLoading(true);
 
     try {

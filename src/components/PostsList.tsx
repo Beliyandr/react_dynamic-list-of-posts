@@ -14,6 +14,7 @@ export const PostsList: FC<Props> = ({ posts }) => {
       if (!prev || prev.id !== post.id) {
         return post;
       }
+
       return prev;
     });
   };
