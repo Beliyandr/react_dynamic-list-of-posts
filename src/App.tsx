@@ -13,13 +13,10 @@ import { Post } from './types/Post';
 import { getUsers } from './components/services/users';
 import { getUserPosts } from './components/services/posts';
 import { PostDetails } from './components/PostDetails';
-import { getPostComments } from './components/services/comments';
-import { Comment } from './types/Comment';
 
 export const App = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [posts, setPosts] = useState<Post[]>([]);
-  const [comments, setComments] = useState<Comment[]>([]);
 
   const [activePost, setActivePost] = useState<Post | null>(null);
 
@@ -45,34 +42,6 @@ export const App = () => {
       getActiveUserPost();
     }
   }, [activeUser]);
-
-  useEffect(() => {
-    if (activePost) {
-      getComments();
-    }
-  }, [activePost]);
-
-  const getComments = async () => {
-    if (!activePost) {
-      return;
-    }
-    setLoading(true);
-    try {
-      const gotComments = await getPostComments(activePost.id);
-
-      setComments(gotComments);
-
-      // if (comments.length) {
-      //   setHasComments(true);
-      // } else {
-      //   setHasComments(false);
-      // }
-    } catch (error) {
-      setErrorMessage('Something went wrong!');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const getActiveUserPost = async () => {
     if (!activeUser) {
@@ -156,7 +125,7 @@ export const App = () => {
               )}
             >
               <div className="tile is-child box is-success ">
-                <PostDetails />
+                <PostDetails activePost={activePost} />
               </div>
             </div>
           )}
