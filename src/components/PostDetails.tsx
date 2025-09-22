@@ -2,8 +2,8 @@ import React, { FC, useEffect, useState } from 'react';
 import { Loader } from './Loader';
 import { NewCommentForm } from './NewCommentForm';
 import { Post } from '../types/Post';
-import { getPostComments } from './services/comments';
-import { Comment } from '../types/Comment';
+import { addPostComment, getPostComments } from './services/comments';
+import { Comment, CommentData } from '../types/Comment';
 import { client } from '../utils/fetchClient';
 
 type Props = {
@@ -21,12 +21,14 @@ export const PostDetails: FC<Props> = ({ activePost }) => {
       getComments();
       setIsActiveWriteComment(false);
     }
+    console.log(comments);
   }, [activePost]);
 
   const getComments = async () => {
     if (!activePost) {
       return;
     }
+
     setLoading(true);
     try {
       const gotComments = await getPostComments(activePost.id);
@@ -39,7 +41,7 @@ export const PostDetails: FC<Props> = ({ activePost }) => {
     }
   };
 
-  function deletePost(commentId: number) {
+  const deletePost = async (commentId: number) => {
     setComments(currentComment =>
       currentComment.filter(comment => comment.id !== commentId),
     );
@@ -49,7 +51,17 @@ export const PostDetails: FC<Props> = ({ activePost }) => {
       setErrorMessage(`Can't Delete a comment`);
       throw error;
     });
-  }
+  };
+
+  const addComment = async (comment: CommentData) => {
+    const newComment = { ...comment, postId: activePost.id };
+
+    return addPostComment(newComment).then(commentar => {
+      setComments(currentComments => {
+        return [...currentComments, commentar];
+      });
+    });
+  };
 
   return (
     <div className="content" data-cy="PostDetails">
@@ -122,7 +134,7 @@ export const PostDetails: FC<Props> = ({ activePost }) => {
           )}
         </div>
 
-        {isActiveWriteComment && <NewCommentForm />}
+        {isActiveWriteComment && <NewCommentForm addComment={addComment} />}
       </div>
     </div>
   );
