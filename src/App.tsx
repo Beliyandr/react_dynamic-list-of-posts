@@ -36,6 +36,7 @@ export const App = () => {
     setLoading(true);
 
     try {
+      console.log(1);
       const gotPosts = await getUserPosts(activeUser.id);
 
       setPosts(gotPosts);
@@ -66,7 +67,7 @@ export const App = () => {
       setActivePost(null);
       getActiveUserPost();
     }
-  }, [activeUser, getActiveUserPost]);
+  }, [activeUser]);
 
   return (
     <main className="section">

@@ -15,7 +15,10 @@ export const UserSelector: FC<Props> = ({
 }) => {
   const [openDrodown, setOpenDrodown] = useState(false);
 
-  const handleActiveUser = (event: React.MouseEvent<HTMLAnchorElement>, user: User) => {
+  const handleActiveUser = (
+    event: React.MouseEvent<HTMLAnchorElement>,
+    user: User,
+  ) => {
     event.preventDefault();
     setActiveUser(user);
     setOpenDrodown(false);
