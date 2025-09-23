@@ -7,7 +7,7 @@ import './App.scss';
 import { PostsList } from './components/PostsList';
 import { UserSelector } from './components/UserSelector';
 import { Loader } from './components/Loader';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { User } from './types/User';
 import { Post } from './types/Post';
 import { getUsers } from './components/services/users';
@@ -28,22 +28,7 @@ export const App = () => {
 
   const [activeUser, setActiveUser] = useState<User | null>(null);
 
-  useEffect(() => {
-    getUsers()
-      .then(users => setUsers(users))
-      .catch(error => {
-        setErrorMessage(error);
-      })
-      .finally(() => {});
-  }, []);
-
-  useEffect(() => {
-    if (activeUser) {
-      getActiveUserPost();
-    }
-  }, [activeUser]);
-
-  const getActiveUserPost = async () => {
+  const getActiveUserPost = useCallback(async () => {
     if (!activeUser) {
       return;
     }
@@ -51,10 +36,10 @@ export const App = () => {
     setLoading(true);
 
     try {
-      const posts = await getUserPosts(activeUser.id);
+      const gotPosts = await getUserPosts(activeUser.id);
 
-      setPosts(posts);
-      if (posts.length) {
+      setPosts(gotPosts);
+      if (gotPosts.length) {
         setHasPosts(true);
       } else {
         setHasPosts(false);
@@ -65,7 +50,22 @@ export const App = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [activeUser]);
+
+  useEffect(() => {
+    getUsers()
+      .then(setUsers)
+      .catch(error => {
+        setErrorMessage(error);
+      })
+      .finally(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (activeUser) {
+      getActiveUserPost();
+    }
+  }, [activeUser, getActiveUserPost]);
 
   return (
     <main className="section">

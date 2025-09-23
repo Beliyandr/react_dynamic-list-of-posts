@@ -5,8 +5,8 @@ export async function getPostComments(postId: number) {
   return client.get<Comment[]>(`/comments?postId=${postId}`);
 }
 
-export async function deletePostComment(postId: number) {
-  return client.delete(`/comments/${postId}`);
+export async function deletePostComment(commentId: number) {
+  return client.delete(`/comments/${commentId}`);
 }
 
 export async function addPostComment(comment: CommentData) {

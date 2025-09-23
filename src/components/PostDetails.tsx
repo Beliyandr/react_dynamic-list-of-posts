@@ -1,10 +1,9 @@
-import React, { FC, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import { Loader } from './Loader';
 import { NewCommentForm } from './NewCommentForm';
 import { Post } from '../types/Post';
-import { addPostComment, getPostComments } from './services/comments';
-import { Comment, CommentData } from '../types/Comment';
-import { client } from '../utils/fetchClient';
+import { deletePostComment, getPostComments } from './services/comments';
+import { Comment } from '../types/Comment';
 
 type Props = {
   activePost: Post;
@@ -15,16 +14,9 @@ export const PostDetails: FC<Props> = ({ activePost }) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [errorMessage, setErrorMessage] = useState('');
   const [isActiveWriteComment, setIsActiveWriteComment] = useState(false);
+  const [deletedComment, setDeletedComment] = useState<number | null>(null);
 
-  useEffect(() => {
-    if (activePost) {
-      getComments();
-      setIsActiveWriteComment(false);
-    }
-    console.log(comments);
-  }, [activePost]);
-
-  const getComments = async () => {
+  const getComments = useCallback(async () => {
     if (!activePost) {
       return;
     }
@@ -39,27 +31,35 @@ export const PostDetails: FC<Props> = ({ activePost }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [activePost]);
 
-  const deletePost = async (commentId: number) => {
-    setComments(currentComment =>
-      currentComment.filter(comment => comment.id !== commentId),
-    );
+  useEffect(() => {
+    if (activePost) {
+      getComments();
+      setIsActiveWriteComment(false);
+    }
+  }, [activePost, getComments]);
 
-    return client.delete(String(commentId)).catch(error => {
-      setComments(comments);
-      setErrorMessage(`Can't Delete a comment`);
-      throw error;
-    });
-  };
+  const deleteComment = async (commentId: number) => {
+    setDeletedComment(commentId);
 
-  const addComment = async (comment: CommentData) => {
-    const newComment = { ...comment, postId: activePost.id };
-
-    return addPostComment(newComment).then(commentar => {
-      setComments(currentComments => {
-        return [...currentComments, commentar];
+    return deletePostComment(commentId)
+      .then(() => {
+        setComments(currentComments => {
+          return currentComments.filter(comment => comment.id !== commentId);
+        });
+      })
+      .catch(() => {
+        setErrorMessage('Something went wrong!');
+      })
+      .finally(() => {
+        setDeletedComment(null);
       });
+  };
+
+  const addComment = (newComment: Comment) => {
+    setComments(currentComments => {
+      return [...currentComments, newComment];
     });
   };
 
@@ -103,12 +103,14 @@ export const PostDetails: FC<Props> = ({ activePost }) => {
                     <a href="mailto:misha@mate.academy" data-cy="CommentAuthor">
                       {comment.name}
                     </a>
+                    {deletedComment === comment.id && <Loader />}
                     <button
                       data-cy="CommentDelete"
                       type="button"
                       className="delete is-small"
                       aria-label="delete"
-                      onClick={() => deletePost(comment.id)}
+                      onClick={() => deleteComment(comment.id)}
+                      disabled={!!deletedComment}
                     >
                       delete button
                     </button>
@@ -134,7 +136,12 @@ export const PostDetails: FC<Props> = ({ activePost }) => {
           )}
         </div>
 
-        {isActiveWriteComment && <NewCommentForm addComment={addComment} />}
+        {isActiveWriteComment && (
+          <NewCommentForm
+            addComment={addComment}
+            activePostId={activePost.id}
+          />
+        )}
       </div>
     </div>
   );

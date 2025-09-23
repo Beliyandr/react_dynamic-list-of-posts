@@ -1,12 +1,17 @@
 import classNames from 'classnames';
 import React, { FC, useState } from 'react';
-import { CommentData } from '../types/Comment';
+import { addPostComment } from './services/comments';
+import { Comment } from '../types/Comment';
 
 type Props = {
-  addComment: (comment: CommentData) => Promise<T>;
+  addComment: (comment: Comment) => void;
+  activePostId: number;
 };
 
-export const NewCommentForm: FC<Props> = ({ addComment = () => {} }) => {
+export const NewCommentForm: FC<Props> = ({
+  addComment = () => {},
+  activePostId,
+}) => {
   const [inputName, setInputName] = useState('');
   const [inputEmail, setInputEmail] = useState('');
   const [inputText, setInputText] = useState('');
@@ -15,21 +20,28 @@ export const NewCommentForm: FC<Props> = ({ addComment = () => {} }) => {
   const [hasInputEmailError, setHasInputEmailError] = useState(false);
   const [hasInputTextError, setHasInputTextError] = useState(false);
 
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (
+  function resetForm() {
+    setInputText('');
+  }
+
+  const handleSubmit = async (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     event.preventDefault();
     if (inputName.length === 0) {
       setHasInputNameError(true);
     }
+
     if (inputEmail.length === 0) {
       setHasInputEmailError(true);
     }
+
     if (inputText.length === 0) {
       setHasInputTextError(true);
     }
+
     if (hasInputNameError && hasInputEmailError && hasInputTextError) {
       return;
     }
@@ -40,13 +52,18 @@ export const NewCommentForm: FC<Props> = ({ addComment = () => {} }) => {
       body: inputText,
     };
 
-    setLoading(true);
-    addComment(message);
-    setLoading(false);
-  };
+    const newComment = { ...message, postId: activePostId };
 
-  const resetForm = () => {
-    setInputText('');
+    setIsLoading(true);
+    addPostComment(newComment)
+      .then(commentar => {
+        addComment(commentar);
+        resetForm();
+      })
+      .catch(() => {})
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const handleInputNameChange = (
@@ -69,8 +86,6 @@ export const NewCommentForm: FC<Props> = ({ addComment = () => {} }) => {
     setInputText(event.target.value);
     setHasInputTextError(false);
   };
-
-  console.log(hasInputEmailError);
 
   return (
     <form data-cy="NewCommentForm">
@@ -173,7 +188,9 @@ export const NewCommentForm: FC<Props> = ({ addComment = () => {} }) => {
         <div className="control">
           <button
             type="submit"
-            className={classNames('button is-link', { 'is-loading': loading })}
+            className={classNames('button is-link', {
+              'is-loading': isLoading,
+            })}
             // disabled={loading}
             onClick={event => {
               handleSubmit(event);

@@ -1,7 +1,6 @@
-import React, { FC, useEffect, useRef, useState } from 'react';
+import { FC, useState } from 'react';
 import { User } from '../types/User';
 import classNames from 'classnames';
-import { Post } from '../types/Post';
 
 type Props = {
   users: User[];
@@ -15,8 +14,6 @@ export const UserSelector: FC<Props> = ({
   setActiveUser = () => {},
 }) => {
   const [openDrodown, setOpenDrodown] = useState(false);
-
-  // const [selectedValue, setSelectedValue] = useState('Choose a user');
 
   const handleActiveUser = (user: User) => {
     setActiveUser(user);
