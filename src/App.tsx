@@ -55,14 +55,15 @@ export const App = () => {
   useEffect(() => {
     getUsers()
       .then(setUsers)
-      .catch(error => {
-        setErrorMessage(error);
+      .catch(() => {
+        setErrorMessage('Failed to load users. Please try again.');
       })
       .finally(() => {});
   }, []);
 
   useEffect(() => {
     if (activeUser) {
+      setActivePost(null);
       getActiveUserPost();
     }
   }, [activeUser, getActiveUserPost]);

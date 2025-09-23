@@ -15,7 +15,8 @@ export const UserSelector: FC<Props> = ({
 }) => {
   const [openDrodown, setOpenDrodown] = useState(false);
 
-  const handleActiveUser = (user: User) => {
+  const handleActiveUser = (event: React.MouseEvent<HTMLAnchorElement>, user: User) => {
+    event.preventDefault();
     setActiveUser(user);
     setOpenDrodown(false);
   };
@@ -32,7 +33,7 @@ export const UserSelector: FC<Props> = ({
           aria-haspopup="true"
           aria-controls="dropdown-menu"
           onClick={() => {
-            setOpenDrodown(true);
+            setOpenDrodown(prev => !prev);
           }}
         >
           <span>{activeUser?.name ?? 'Choose a user'}</span>
@@ -51,7 +52,7 @@ export const UserSelector: FC<Props> = ({
             return (
               <a
                 key={id}
-                onClick={() => handleActiveUser(user)}
+                onClick={event => handleActiveUser(event, user)}
                 href={`#user-${id}`}
                 className={classNames('dropdown-item', {
                   'is-active': id === activeUser?.id,

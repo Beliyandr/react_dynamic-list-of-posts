@@ -41,22 +41,22 @@ export const NewCommentForm: FC<Props> = ({
   ) => {
     event.preventDefault();
 
-    if (inputName.length === 0) {
+    if (inputName.trim().length === 0) {
       setHasInputNameError(true);
     }
 
-    if (inputEmail.length === 0) {
+    if (inputEmail.trim().length === 0) {
       setHasInputEmailError(true);
     }
 
-    if (inputText.length === 0) {
+    if (inputText.trim().length === 0) {
       setHasInputTextError(true);
     }
 
     if (
-      inputText.length === 0 ||
-      inputEmail.length === 0 ||
-      inputName.length === 0
+      inputText.trim().length === 0 ||
+      inputEmail.trim().length === 0 ||
+      inputName.trim().length === 0
     ) {
       return;
     } else {
@@ -70,8 +70,8 @@ export const NewCommentForm: FC<Props> = ({
 
       setIsLoading(true);
       addPostComment(newComment)
-        .then(commentar => {
-          addComment(commentar);
+        .then(comment => {
+          addComment(comment);
           resetForm();
         })
         .catch(() => {})
