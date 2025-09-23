@@ -26,10 +26,21 @@ export const NewCommentForm: FC<Props> = ({
     setInputText('');
   }
 
+  function clearForm() {
+    setInputText('');
+    setInputEmail('');
+    setInputName('');
+
+    setHasInputNameError(false);
+    setHasInputEmailError(false);
+    setHasInputTextError(false);
+  }
+
   const handleSubmit = async (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     event.preventDefault();
+
     if (inputName.length === 0) {
       setHasInputNameError(true);
     }
@@ -42,28 +53,32 @@ export const NewCommentForm: FC<Props> = ({
       setHasInputTextError(true);
     }
 
-    if (hasInputNameError && hasInputEmailError && hasInputTextError) {
+    if (
+      inputText.length === 0 ||
+      inputEmail.length === 0 ||
+      inputName.length === 0
+    ) {
       return;
+    } else {
+      const message = {
+        name: inputName,
+        email: inputEmail,
+        body: inputText,
+      };
+
+      const newComment = { ...message, postId: activePostId };
+
+      setIsLoading(true);
+      addPostComment(newComment)
+        .then(commentar => {
+          addComment(commentar);
+          resetForm();
+        })
+        .catch(() => {})
+        .finally(() => {
+          setIsLoading(false);
+        });
     }
-
-    const message = {
-      name: inputName,
-      email: inputEmail,
-      body: inputText,
-    };
-
-    const newComment = { ...message, postId: activePostId };
-
-    setIsLoading(true);
-    addPostComment(newComment)
-      .then(commentar => {
-        addComment(commentar);
-        resetForm();
-      })
-      .catch(() => {})
-      .finally(() => {
-        setIsLoading(false);
-      });
   };
 
   const handleInputNameChange = (
@@ -202,7 +217,11 @@ export const NewCommentForm: FC<Props> = ({
 
         <div className="control">
           {/* eslint-disable-next-line react/button-has-type */}
-          <button type="reset" className="button is-link is-light">
+          <button
+            type="reset"
+            className="button is-link is-light"
+            onClick={clearForm}
+          >
             Clear
           </button>
         </div>
