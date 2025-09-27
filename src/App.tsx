@@ -7,10 +7,9 @@ import './App.scss';
 import { PostsList } from './components/PostsList';
 import { UserSelector } from './components/UserSelector';
 import { Loader } from './components/Loader';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { User } from './types/User';
 import { Post } from './types/Post';
-import { getUsers } from './components/services/users';
 import { getUserPosts } from './components/services/posts';
 import { PostDetails } from './components/PostDetails';
 
@@ -50,8 +49,6 @@ export const App = () => {
       setLoading(false);
     }
   }, [activeUser]);
-
-
 
   return (
     <main className="section">
