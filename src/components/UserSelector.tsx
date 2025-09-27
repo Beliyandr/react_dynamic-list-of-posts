@@ -1,19 +1,23 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { User } from '../types/User';
 import classNames from 'classnames';
+import { getUsers } from './services/users';
 
 type Props = {
-  users: User[];
   activeUser: User | null;
   setActiveUser: (user: User) => void;
+  setErrorMessage: (message: string) => string | void;
+  getActiveUserPost: () => void;
 };
 
 export const UserSelector: FC<Props> = ({
-  users,
   activeUser,
   setActiveUser = () => {},
+  setErrorMessage = () => {},
+  getActiveUserPost = () => {},
 }) => {
   const [openDrodown, setOpenDrodown] = useState(false);
+  const [users, setUsers] = useState<User[]>([]);
 
   const handleActiveUser = (
     event: React.MouseEvent<HTMLAnchorElement>,
@@ -23,6 +27,19 @@ export const UserSelector: FC<Props> = ({
     setActiveUser(user);
     setOpenDrodown(false);
   };
+
+  useEffect(() => {
+    getActiveUserPost();
+  }, [activeUser]);
+
+  useEffect(() => {
+    getUsers()
+      .then(setUsers)
+      .catch(() => {
+        setErrorMessage('Failed to load users. Please try again.');
+      })
+      .finally(() => {});
+  }, []);
 
   return (
     <div

@@ -38,7 +38,7 @@ export const PostDetails: FC<Props> = ({ activePost }) => {
       getComments();
       setIsActiveWriteComment(false);
     }
-  }, [activePost, getComments]);
+  }, [activePost]);
 
   const deleteComment = async (commentId: number) => {
     setDeletedComment(commentId);

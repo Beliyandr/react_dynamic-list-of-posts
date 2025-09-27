@@ -15,7 +15,6 @@ import { getUserPosts } from './components/services/posts';
 import { PostDetails } from './components/PostDetails';
 
 export const App = () => {
-  const [users, setUsers] = useState<User[]>([]);
   const [posts, setPosts] = useState<Post[]>([]);
 
   const [activePost, setActivePost] = useState<Post | null>(null);
@@ -34,9 +33,8 @@ export const App = () => {
     }
 
     setLoading(true);
-
+    setActivePost(null);
     try {
-      console.log(1);
       const gotPosts = await getUserPosts(activeUser.id);
 
       setPosts(gotPosts);
@@ -53,21 +51,7 @@ export const App = () => {
     }
   }, [activeUser]);
 
-  useEffect(() => {
-    getUsers()
-      .then(setUsers)
-      .catch(() => {
-        setErrorMessage('Failed to load users. Please try again.');
-      })
-      .finally(() => {});
-  }, []);
 
-  useEffect(() => {
-    if (activeUser) {
-      setActivePost(null);
-      getActiveUserPost();
-    }
-  }, [activeUser]);
 
   return (
     <main className="section">
@@ -75,11 +59,17 @@ export const App = () => {
         <div className="tile is-ancestor">
           <div className="tile is-parent">
             <div className="tile is-child box is-success">
-              <div className="block">
+              <div
+                className="block"
+                onClick={() => {
+                  console.log(1);
+                }}
+              >
                 <UserSelector
-                  users={users}
                   activeUser={activeUser}
                   setActiveUser={setActiveUser}
+                  setErrorMessage={setErrorMessage}
+                  getActiveUserPost={getActiveUserPost}
                 />
               </div>
 
