@@ -22,7 +22,7 @@ export const App = () => {
 
   const [hasPosts, setHasPosts] = useState(false);
 
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [activeUser, setActiveUser] = useState<User | null>(null);
 
@@ -31,7 +31,7 @@ export const App = () => {
       return;
     }
 
-    setLoading(true);
+    setIsLoading(true);
     setActivePost(null);
     try {
       const gotPosts = await getUserPosts(activeUser.id);
@@ -46,7 +46,7 @@ export const App = () => {
       setHasPosts(false);
       setErrorMessage('Something went wrong!');
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   }, [activeUser]);
 
@@ -69,7 +69,7 @@ export const App = () => {
                 {!activeUser && (
                   <p data-cy="NoSelectedUser">No user selected</p>
                 )}
-                {loading && <Loader />}
+                {isLoading && <Loader />}
 
                 {errorMessage && (
                   <div
@@ -80,7 +80,7 @@ export const App = () => {
                   </div>
                 )}
 
-                {hasPosts && activeUser && !loading && (
+                {hasPosts && activeUser && !isLoading && (
                   <PostsList
                     posts={posts}
                     getActivePost={setActivePost}
@@ -88,7 +88,7 @@ export const App = () => {
                   />
                 )}
 
-                {!hasPosts && activeUser && !loading && (
+                {!hasPosts && activeUser && !isLoading && (
                   <div className="notification is-warning" data-cy="NoPostsYet">
                     No posts yet
                   </div>
@@ -97,7 +97,7 @@ export const App = () => {
             </div>
           </div>
 
-          {activePost && !loading && (
+          {activePost && !isLoading && (
             <div
               data-cy="Sidebar"
               className={classNames(

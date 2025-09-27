@@ -10,7 +10,7 @@ type Props = {
 };
 
 export const PostDetails: FC<Props> = ({ activePost }) => {
-  const [loading, setLoading] = useState(true);
+  const [isloading, setIsLoading] = useState(true);
   const [comments, setComments] = useState<Comment[]>([]);
   const [errorMessage, setErrorMessage] = useState('');
   const [isActiveWriteComment, setIsActiveWriteComment] = useState(false);
@@ -21,7 +21,7 @@ export const PostDetails: FC<Props> = ({ activePost }) => {
       return;
     }
 
-    setLoading(true);
+    setIsLoading(true);
     try {
       const gotComments = await getPostComments(activePost.id);
 
@@ -29,7 +29,7 @@ export const PostDetails: FC<Props> = ({ activePost }) => {
     } catch (error) {
       setErrorMessage('Something went wrong!');
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   }, [activePost]);
 
@@ -75,21 +75,21 @@ export const PostDetails: FC<Props> = ({ activePost }) => {
         </div>
 
         <div className="block">
-          {loading && <Loader />}
+          {isloading && <Loader />}
 
-          {!loading && errorMessage && (
+          {!isloading && errorMessage && (
             <div className="notification is-danger" data-cy="CommentsError">
               Something went wrong
             </div>
           )}
 
-          {!loading && comments.length === 0 && (
+          {!isloading && comments.length === 0 && (
             <p className="title is-4" data-cy="NoCommentsMessage">
               No comments yet
             </p>
           )}
 
-          {!loading && comments.length > 0 && (
+          {!isloading && comments.length > 0 && (
             <>
               <p className="title is-4">Comments:</p>
 
@@ -124,7 +124,7 @@ export const PostDetails: FC<Props> = ({ activePost }) => {
             </>
           )}
 
-          {!loading && !isActiveWriteComment && (
+          {!isloading && !isActiveWriteComment && (
             <button
               data-cy="WriteCommentButton"
               type="button"
