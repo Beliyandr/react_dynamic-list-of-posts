@@ -13,8 +13,6 @@ export const PostsList: FC<Props> = ({
   activePost,
   getActivePost = () => {},
 }) => {
-  // const [activePost, setActivePost] = useState<Post | null>(null);
-
   const handleOpenPost = (post: Post) => {
     if (activePost?.id !== post.id) {
       getActivePost(post);

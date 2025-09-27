@@ -56,12 +56,7 @@ export const App = () => {
         <div className="tile is-ancestor">
           <div className="tile is-parent">
             <div className="tile is-child box is-success">
-              <div
-                className="block"
-                onClick={() => {
-                  console.log(1);
-                }}
-              >
+              <div className="block">
                 <UserSelector
                   activeUser={activeUser}
                   setActiveUser={setActiveUser}
