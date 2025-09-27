@@ -7,7 +7,7 @@ import './App.scss';
 import { PostsList } from './components/PostsList';
 import { UserSelector } from './components/UserSelector';
 import { Loader } from './components/Loader';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { User } from './types/User';
 import { Post } from './types/Post';
 import { getUserPosts } from './components/services/posts';
@@ -47,6 +47,15 @@ export const App = () => {
       setErrorMessage('Something went wrong!');
     } finally {
       setIsLoading(false);
+    }
+  }, [activeUser]);
+
+  useEffect(() => {
+    if (!activeUser) {
+      setPosts([]);
+      setHasPosts(false);
+      setErrorMessage('');
+      setActivePost(null);
     }
   }, [activeUser]);
 
