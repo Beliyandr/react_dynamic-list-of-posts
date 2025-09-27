@@ -32,7 +32,7 @@ export const App = () => {
     }
 
     setIsLoading(true);
-    setActivePost(null);
+
     try {
       const gotPosts = await getUserPosts(activeUser.id);
 

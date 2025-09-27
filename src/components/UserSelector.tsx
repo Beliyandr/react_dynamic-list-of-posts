@@ -29,7 +29,9 @@ export const UserSelector: FC<Props> = ({
   };
 
   useEffect(() => {
-    getActiveUserPost();
+    if (activeUser) {
+      getActiveUserPost();
+    }
   }, [activeUser]);
 
   useEffect(() => {
