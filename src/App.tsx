@@ -12,6 +12,7 @@ import { User } from './types/User';
 import { Post } from './types/Post';
 import { getUserPosts } from './components/services/posts';
 import { PostDetails } from './components/PostDetails';
+import { post } from 'cypress/types/jquery';
 
 export const App = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -26,27 +27,25 @@ export const App = () => {
 
   const [activeUser, setActiveUser] = useState<User | null>(null);
 
-  const getActiveUserPost = useCallback(async () => {
-    if (!activeUser) {
-      return;
-    }
-
-    setIsLoading(true);
-
-    try {
-      const gotPosts = await getUserPosts(activeUser.id);
-
-      setPosts(gotPosts);
-      if (gotPosts.length) {
-        setHasPosts(true);
-      } else {
-        setHasPosts(false);
-      }
-    } catch (error) {
-      setHasPosts(false);
-      setErrorMessage('Something went wrong!');
-    } finally {
-      setIsLoading(false);
+  useEffect(() => {
+    if (activeUser?.id) {
+      setIsLoading(true);
+      getUserPosts(activeUser.id)
+        .then(posts => {
+          setPosts(posts);
+          if (posts.length > 0) {
+            setHasPosts(true);
+          } else {
+            setHasPosts(false);
+          }
+        })
+        .catch(error => {
+          setHasPosts(false);
+          setErrorMessage('Something went wrong!' + error);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
     }
   }, [activeUser]);
 
@@ -70,7 +69,6 @@ export const App = () => {
                   activeUser={activeUser}
                   setActiveUser={setActiveUser}
                   setErrorMessage={setErrorMessage}
-                  getActiveUserPost={getActiveUserPost}
                 />
               </div>
 
@@ -85,7 +83,7 @@ export const App = () => {
                     className="notification is-danger"
                     data-cy="PostsLoadingError"
                   >
-                    Something went wrong!
+                    {errorMessage}
                   </div>
                 )}
 

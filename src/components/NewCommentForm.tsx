@@ -36,7 +36,7 @@ export const NewCommentForm: FC<Props> = ({
     setHasInputTextError(false);
   }
 
-  const handleSubmit = async (
+  const handleSubmit = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     event.preventDefault();
@@ -74,7 +74,7 @@ export const NewCommentForm: FC<Props> = ({
           addComment(comment);
           resetForm();
         })
-        .catch(() => {})
+        .catch(error => 'Handle add and delete errors so the user can retry')
         .finally(() => {
           setIsLoading(false);
         });

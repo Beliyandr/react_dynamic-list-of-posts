@@ -65,84 +65,79 @@ export const PostDetails: FC<Props> = ({ activePost }) => {
 
   return (
     <div className="content" data-cy="PostDetails">
-      <div className="content" data-cy="PostDetails">
-        <div className="block">
-          <h2 data-cy="PostTitle">
-            #{activePost.id}: {activePost.title}
-          </h2>
+      <div className="block">
+        <h2 data-cy="PostTitle">
+          #{activePost.id}: {activePost.title}
+        </h2>
 
-          <p data-cy="PostBody">{activePost.title}</p>
-        </div>
+        <p data-cy="PostBody">{activePost.title}</p>
+      </div>
 
-        <div className="block">
-          {isloading && <Loader />}
+      <div className="block">
+        {isloading && <Loader />}
 
-          {!isloading && errorMessage && (
-            <div className="notification is-danger" data-cy="CommentsError">
-              Something went wrong
-            </div>
-          )}
+        {!isloading && errorMessage && (
+          <div className="notification is-danger" data-cy="CommentsError">
+            Something went wrong
+          </div>
+        )}
 
-          {!isloading && comments.length === 0 && (
-            <p className="title is-4" data-cy="NoCommentsMessage">
-              No comments yet
-            </p>
-          )}
+        {!isloading && comments.length === 0 && (
+          <p className="title is-4" data-cy="NoCommentsMessage">
+            No comments yet
+          </p>
+        )}
 
-          {!isloading && comments.length > 0 && (
-            <>
-              <p className="title is-4">Comments:</p>
+        {!isloading && comments.length > 0 && (
+          <>
+            <p className="title is-4">Comments:</p>
 
-              {comments.map(comment => (
-                <article
-                  key={comment.id}
-                  className="message is-small"
-                  data-cy="Comment"
-                >
-                  <div className="message-header">
-                    <a href="mailto:misha@mate.academy" data-cy="CommentAuthor">
-                      {comment.name}
-                    </a>
-                    {deletedComment === comment.id && <Loader />}
-                    <button
-                      data-cy="CommentDelete"
-                      type="button"
-                      className="delete is-small"
-                      aria-label="delete"
-                      onClick={() => deleteComment(comment.id)}
-                      disabled={!!deletedComment}
-                    >
-                      delete button
-                    </button>
-                  </div>
+            {comments.map(comment => (
+              <article
+                key={comment.id}
+                className="message is-small"
+                data-cy="Comment"
+              >
+                <div className="message-header">
+                  <a href="mailto:misha@mate.academy" data-cy="CommentAuthor">
+                    {comment.name}
+                  </a>
+                  {deletedComment === comment.id && <Loader />}
+                  <button
+                    data-cy="CommentDelete"
+                    type="button"
+                    className="delete is-small"
+                    aria-label="delete"
+                    onClick={() => deleteComment(comment.id)}
+                    disabled={!!deletedComment}
+                  >
+                    delete button
+                  </button>
+                </div>
 
-                  <div className="message-body" data-cy="CommentBody">
-                    {comment.body}
-                  </div>
-                </article>
-              ))}
-            </>
-          )}
+                <div className="message-body" data-cy="CommentBody">
+                  {comment.body}
+                </div>
+              </article>
+            ))}
+          </>
+        )}
 
-          {!isloading && !isActiveWriteComment && (
-            <button
-              data-cy="WriteCommentButton"
-              type="button"
-              className="button is-link"
-              onClick={() => setIsActiveWriteComment(true)}
-            >
-              Write a comment
-            </button>
-          )}
-        </div>
-
-        {isActiveWriteComment && (
-          <NewCommentForm
-            addComment={addComment}
-            activePostId={activePost.id}
-          />
+        {!isloading && !isActiveWriteComment && (
+          <button
+            data-cy="WriteCommentButton"
+            type="button"
+            className="button is-link"
+            onClick={() => setIsActiveWriteComment(true)}
+          >
+            Write a comment
+          </button>
         )}
       </div>
+
+      {isActiveWriteComment && (
+        <NewCommentForm addComment={addComment} activePostId={activePost.id} />
+      )}
     </div>
   );
 };

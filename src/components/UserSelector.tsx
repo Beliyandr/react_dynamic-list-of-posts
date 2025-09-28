@@ -7,14 +7,12 @@ type Props = {
   activeUser: User | null;
   setActiveUser: (user: User) => void;
   setErrorMessage: (message: string) => string | void;
-  getActiveUserPost: () => void;
 };
 
 export const UserSelector: FC<Props> = ({
   activeUser,
   setActiveUser = () => {},
   setErrorMessage = () => {},
-  getActiveUserPost = () => {},
 }) => {
   const [openDrodown, setOpenDrodown] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
@@ -27,12 +25,6 @@ export const UserSelector: FC<Props> = ({
     setActiveUser(user);
     setOpenDrodown(false);
   };
-
-  useEffect(() => {
-    if (activeUser) {
-      getActiveUserPost();
-    }
-  }, [activeUser]);
 
   useEffect(() => {
     getUsers()
