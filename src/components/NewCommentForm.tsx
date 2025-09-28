@@ -74,7 +74,7 @@ export const NewCommentForm: FC<Props> = ({
           addComment(comment);
           resetForm();
         })
-        .catch(error => 'Handle add and delete errors so the user can retry')
+        .catch(() => 'Handle add and delete errors so the user can retry')
         .finally(() => {
           setIsLoading(false);
         });

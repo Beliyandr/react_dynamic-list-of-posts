@@ -7,12 +7,11 @@ import './App.scss';
 import { PostsList } from './components/PostsList';
 import { UserSelector } from './components/UserSelector';
 import { Loader } from './components/Loader';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { User } from './types/User';
 import { Post } from './types/Post';
 import { getUserPosts } from './components/services/posts';
 import { PostDetails } from './components/PostDetails';
-import { post } from 'cypress/types/jquery';
 
 export const App = () => {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -31,9 +30,9 @@ export const App = () => {
     if (activeUser?.id) {
       setIsLoading(true);
       getUserPosts(activeUser.id)
-        .then(posts => {
-          setPosts(posts);
-          if (posts.length > 0) {
+        .then(postsFromSrv => {
+          setPosts(postsFromSrv);
+          if (postsFromSrv.length > 0) {
             setHasPosts(true);
           } else {
             setHasPosts(false);
