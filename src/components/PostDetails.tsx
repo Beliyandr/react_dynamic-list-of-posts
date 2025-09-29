@@ -16,27 +16,22 @@ export const PostDetails: FC<Props> = ({ activePost }) => {
   const [isActiveWriteComment, setIsActiveWriteComment] = useState(false);
   const [deletedComment, setDeletedComment] = useState<number | null>(null);
 
-  const getComments = useCallback(async () => {
-    if (!activePost) {
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const gotComments = await getPostComments(activePost.id);
-
-      setComments(gotComments);
-    } catch (error) {
-      setErrorMessage('Something went wrong!');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [activePost]);
-
   useEffect(() => {
+    setComments([]);
+    setErrorMessage('');
     if (activePost) {
-      getComments();
-      setIsActiveWriteComment(false);
+      setIsLoading(true);
+      getPostComments(activePost.id)
+        .then(commentsFromServer => {
+          setComments(commentsFromServer);
+          setIsActiveWriteComment(false);
+        })
+        .catch(() => {
+          setErrorMessage('Something went wrong!');
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
     }
   }, [activePost]);
 

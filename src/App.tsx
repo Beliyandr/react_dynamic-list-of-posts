@@ -18,7 +18,7 @@ export const App = () => {
 
   const [activePost, setActivePost] = useState<Post | null>(null);
 
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState<null | string>(null);
 
   const [hasPosts, setHasPosts] = useState(false);
 
@@ -26,8 +26,17 @@ export const App = () => {
 
   const [activeUser, setActiveUser] = useState<User | null>(null);
 
+  const resetBeforeGetPosts = () => {
+    setPosts([]);
+    setHasPosts(false);
+    setErrorMessage(null);
+    setActivePost(null);
+  };
+
   useEffect(() => {
     if (activeUser?.id) {
+      resetBeforeGetPosts();
+
       setIsLoading(true);
       getUserPosts(activeUser.id)
         .then(postsFromSrv => {
@@ -38,22 +47,13 @@ export const App = () => {
             setHasPosts(false);
           }
         })
-        .catch(error => {
+        .catch(() => {
           setHasPosts(false);
-          setErrorMessage('Something went wrong!' + error);
+          setErrorMessage('Something went wrong!');
         })
         .finally(() => {
           setIsLoading(false);
         });
-    }
-  }, [activeUser]);
-
-  useEffect(() => {
-    if (!activeUser) {
-      setPosts([]);
-      setHasPosts(false);
-      setErrorMessage('');
-      setActivePost(null);
     }
   }, [activeUser]);
 
